@@ -1,0 +1,86 @@
+CREATE DATABASE db_DRILL_LIBRARY
+
+USE db_DRILL_LIBRARY
+
+CREATE PROCEDURE getDrill1
+AS
+SELECT  tbl_books_COPIES.COPIES_Number_Of_Copies
+FROM tbl_books_COPIES
+INNER JOIN tbl_LIBRARY_BRANCH ON tbl_LIBRARY_BRANCH.LIBRARY_BranchID = tbl_books_COPIES.COPIES_BranchID
+INNER JOIN tbl_books ON tbl_books.BOOKS_BookId = tbl_books_COPIES.COPIES_BookID
+WHERE LIBRARY_BranchName='Sharpstown' AND BOOKS_Title='Lost Tribes'
+;
+
+GO
+
+CREATE PROCEDURE getDrill2
+AS
+SELECT  tbl_books_COPIES.COPIES_Number_Of_Copies, tbl_LIBRARY_BRANCH.LIBRARY_BranchName
+FROM tbl_books_COPIES
+INNER JOIN tbl_LIBRARY_BRANCH ON tbl_LIBRARY_BRANCH.LIBRARY_BranchID = tbl_books_COPIES.COPIES_BranchID
+INNER JOIN tbl_books ON tbl_books.BOOKS_BookId = tbl_books_COPIES.COPIES_BookID
+WHERE BOOKS_Title='Lost Tribes'
+;
+
+GO
+
+CREATE PROCEDURE getDrill3
+AS
+SELECT  tbl_BORROWER.BORROWER_Name
+
+FROM tbl_BORROWER
+LEFT JOIN tbl_books_LOANS ON tbl_books_LOANS.LOANS_CardNo = tbl_BORROWER.BORROWER_CardNo_ID 
+WHERE LOANS_CardNo IS NULL
+; 
+GO
+
+
+
+CREATE PROCEDURE getDrill4
+AS
+SELECT tbl_books.BOOKS_Title, tbl_BORROWER.BORROWER_Name, tbl_BORROWER.BORROWER_Address, tbl_books_LOANS.LOANS_DateDue, tbl_LIBRARY_BRANCH.LIBRARY_BranchName 
+FROM tbl_BORROWER
+INNER JOIN tbl_books_LOANS ON tbl_BORROWER.BORROWER_CardNo_ID = tbl_books_LOANS.LOANS_CardNo
+INNER JOIN tbl_LIBRARY_BRANCH ON tbl_LIBRARY_BRANCH.LIBRARY_BranchID = tbl_books_LOANS.LOANS_BranchID
+INNER JOIN tbl_books ON tbl_books.BOOKS_BookId = tbl_books_LOANS.LOANS_BookID
+WHERE tbl_books_LOANS.LOANS_DateDue='11/18/2019' AND tbl_LIBRARY_BRANCH.LIBRARY_BranchName='Sharpstown'
+;
+
+GO
+
+
+CREATE PROCEDURE getDrill5
+AS 
+SELECT tbl_LIBRARY_BRANCH.LIBRARY_BranchName, COUNT(tbl_books_LOANS.LOANS_BookID)
+FROM tbl_books_LOANS
+INNER JOIN tbl_LIBRARY_BRANCH ON tbl_LIBRARY_BRANCH.LIBRARY_BranchID=tbl_books_LOANS.LOANS_BranchID
+
+GROUP BY tbl_LIBRARY_BRANCH.LIBRARY_BranchName
+;
+
+GO
+
+
+CREATE PROCEDURE getDrill6
+AS 
+SELECT tbl_BORROWER.BORROWER_Name, tbl_BORROWER.BORROWER_Address, COUNT (tbl_books_LOANS.LOANS_CardNo)
+FROM tbl_BORROWER
+INNER JOIN tbl_books_LOANS ON tbl_BORROWER.BORROWER_CardNo_ID = tbl_books_LOANS.LOANS_CardNo
+	
+GROUP BY tbl_BORROWER.BORROWER_Name, tbl_BORROWER.BORROWER_Address HAVING COUNT (tbl_books_LOANS.LOANS_CardNo) > 5
+;
+GO
+-- I do do not have a number above 5
+GO
+
+CREATE PROCEDURE getDrill7
+AS 
+SELECT tbl_books_COPIES.COPIES_Number_Of_Copies, tbl_books_Author.AUTHOR_AuthorName, tbl_books.BOOKS_Title, tbl_LIBRARY_BRANCH.LIBRARY_BranchName
+FROM tbl_books
+INNER JOIN tbl_books_Author ON tbl_books.BOOKS_BookId = tbl_books_Author.AUTHOR_BookID
+INNER JOIN tbl_books_COPIES ON tbl_books_COPIES.COPIES_BookID = tbl_books.BOOKS_BookId 
+INNER JOIN tbl_LIBRARY_BRANCH ON tbl_LIBRARY_BRANCH.LIBRARY_BranchID = tbl_books.BOOKS_BookId 
+WHERE tbl_books_Author.AUTHOR_AuthorName='Stephen King' AND tbl_LIBRARY_BRANCH.LIBRARY_BranchName = 'Central'
+;
+
+
